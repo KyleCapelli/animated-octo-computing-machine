@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     name: Test changed-files
     outputs:
-      matrix: ${{ steps.changed-files.outputs.matrix }}
+      matrix: ${{ steps.changed-files.outputs.all_changed_files }}
     steps:
       - uses: actions/checkout@v4
       - name: Get changed files
@@ -32,6 +32,7 @@ jobs:
     strategy:
       matrix: 
         directories: ${{ fromJSON(needs.changed-files.outputs.matrix) }}
+      max-parallel: 4
       fail-fast: false
     steps:
       - name: Checkout
@@ -39,10 +40,3 @@ jobs:
       - name: Test
         run: |
           echo ${{ matrix.directories }}
-            
-      # - name: Create Build Matrix
-      #   id: create-matrix
-      #   working-directory: ${{ matrix.directories }}
-      #   run: |
-      #     CONFIG=$(yq e -o=json '.' variants.yaml)
-      #     echo $CONFIG
