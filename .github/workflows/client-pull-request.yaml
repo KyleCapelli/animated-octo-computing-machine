@@ -31,7 +31,8 @@ jobs:
     needs: [changed-files]
     outputs:
       variants: ${{ steps.set-variants.outputs.variants }}
-      directory: ${{ steps.set-variants.outputs.directory }} # This output will pass the current directory
+      directory: ${{ steps.set-variants.outputs.directory }}
+      has_variants: ${{ steps.set-variants.outputs.has_variants }}
     strategy:
       matrix: 
         directories: ${{ fromJSON(needs.changed-files.outputs.matrix) }}
@@ -46,9 +47,14 @@ jobs:
         run: |
           CONFIG=$(yq e -o=json '.' variants.yaml)
           VARIANTS=$(echo $CONFIG | jq -r '.variants | @json')
-          echo "::set-output name=has_variants::true"
-          echo "::set-output name=variants::$VARIANTS"
-          echo "::set-output name=directory::${{ matrix.directories }}"
+          if [[ -z "$VARIANTS" || "$VARIANTS" == "null" ]]; then
+            echo "::set-output name=has_variants::false"
+          else
+            echo "::set-output name=has_variants::true"
+            echo "::set-output name=variants::$VARIANTS"
+          fi
+          echo "::set-output name=directory::${{ matrix.directories }}"  # Setting the directory output
+
 
   build-variants:
     runs-on: ubuntu-latest
