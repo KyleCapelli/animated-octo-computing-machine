@@ -29,7 +29,7 @@ jobs:
         id: create-matrix
         run: |
           MATRIX=[]
-          CONFIG=$(cat build-config.yml | yq e '.' -)
+          CONFIG=$(cat games/build-config.yml | yq e '.' -)
           for DIR in ${{ steps.changed-files.outputs.all_changed_files }}; do
             GAME=$(basename $DIR)
             VARIANTS=$(echo "$CONFIG" | yq e ".games.${GAME}.variants[]" -)
