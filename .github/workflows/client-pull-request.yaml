@@ -48,15 +48,16 @@ jobs:
         run: |
           CONFIG=$(yq e -o=json '.' variants.yaml)
           VARIANTS=$(echo $CONFIG | jq -r '.variants')
-          echo "::set-output name=variants::$VARIANTS"
+          echo $VARIANTS
+          # echo "::set-output name=variants::$VARIANTS"
 
-  run-variants:
-    runs-on: ubuntu-latest
-    needs: create-matrix
-    strategy:
-      matrix:
-        variant: ${{ fromJSON(needs.create-matrix.outputs.variants) }}
-    steps:
-      - name: Print Variant Type
-        run: |
-          echo "Running job for variant: ${{ matrix.variant }}"
+  # run-variants:
+  #   runs-on: ubuntu-latest
+  #   needs: create-matrix
+  #   strategy:
+  #     matrix:
+  #       variant: ${{ fromJSON(needs.create-matrix.outputs.variants) }}
+  #   steps:
+  #     - name: Print Variant Type
+  #       run: |
+  #         echo "Running job for variant: ${{ matrix.variant }}"
