@@ -1,0 +1,7 @@
+games:
+  blackjack:
+    variants:
+      - classic
+      - premium
+  caribbean-stud:
+    variants: []

@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     name: Test changed-files
     outputs:
-      matrix: ${{ steps.changed-files.outputs.all_changed_files }}
+      matrix: ${{ steps.create-matrix.outputs.matrix }}
     steps:
       - uses: actions/checkout@v4
       - name: Get changed files
@@ -24,6 +24,24 @@ jobs:
           matrix: true
           files: |
             games/*/client/**
+      
+        name: Create Build Matrix
+        id: create-matrix
+        run: |
+          MATRIX=[]
+          CONFIG=$(cat build-config.yml | yq e '.' -)
+          for DIR in ${{ steps.changed-files.outputs.all_changed_files }}; do
+            GAME=$(basename $DIR)
+            VARIANTS=$(echo "$CONFIG" | yq e ".games.${GAME}.variants[]" -)
+            if [[ -n "$VARIANTS" ]]; then
+              for VARIANT in $VARIANTS; do
+                MATRIX+=("{\"directory\":\"$DIR\",\"build_command\":\"npm run build:$VARIANT\"}")
+              done
+            else
+              MATRIX+=("{\"directory\":\"$DIR\",\"build_command\":\"npm run build\"}")
+            fi
+          done
+          echo "matrix=$(echo ${MATRIX[@]} | jq -s '.')" >> $GITHUB_OUTPUT
   
   matrix-job:
     runs-on: ubuntu-latest
@@ -32,7 +50,6 @@ jobs:
     strategy:
       matrix: 
         directories: ${{ fromJSON(needs.changed-files.outputs.matrix) }}
-      max-parallel: 4
       fail-fast: false
     steps:
       - name: Checkout
