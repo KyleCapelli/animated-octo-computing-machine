@@ -46,4 +46,11 @@ jobs:
         working-directory: ${{ matrix.directories }}
         run: |
           CONFIG=$(yq e -o=json '.' variants.yaml)
-          echo $CONFIG
+          VARIANTS=$(echo $CONFIG | jq -r '.variants[]')
+
+          MATRIX=()
+          for VARIANT in $VARIANTS; do
+            MATRIX+=("{\"variant\": \"$VARIANT\"}")
+          done
+
+          echo "matrix=$(echo ${MATRIX[@]} | jq -s '.')" >> $GITHUB_OUTPUT
