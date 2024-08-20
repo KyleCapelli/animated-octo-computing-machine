@@ -24,40 +24,63 @@ jobs:
           matrix: true
           files: |
             games/*/client/**
-  
+
   create-matrix:
     runs-on: ubuntu-latest
     name: Create matrix
     needs: [changed-files]
     outputs:
       variants: ${{ steps.set-variants.outputs.variants }}
+      directory: ${{ steps.set-variants.outputs.directory }} # This output will pass the current directory
     strategy:
       matrix: 
         directories: ${{ fromJSON(needs.changed-files.outputs.matrix) }}
-      max-parallel: 4
       fail-fast: false
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - name: Test
-        run: |
-          echo ${{ matrix.directories }}
-      - name: Set Variants
+
+      - name: Check Variants
         id: set-variants
         working-directory: ${{ matrix.directories }}
         run: |
           CONFIG=$(yq e -o=json '.' variants.yaml)
           VARIANTS=$(echo $CONFIG | jq -r '.variants | @json')
-          echo "::set-output name=variants::$VARIANTS"
+          if [[ -z "$VARIANTS" || "$VARIANTS" == "null" ]]; then
+            echo "::set-output name=has_variants::false"
+          else
+            echo "::set-output name=has_variants::true"
+            echo "::set-output name=variants::$VARIANTS"
+          fi
+          echo "::set-output name=directory::${{ matrix.directories }}"  # Setting the directory output
 
-  run-variants:
+  build-variants:
     runs-on: ubuntu-latest
     needs: create-matrix
+    if: needs.create-matrix.outputs.has_variants == 'true'
     strategy:
       matrix:
         variant: ${{ fromJSON(needs.create-matrix.outputs.variants) }}
     steps:
-      - name: Print Variant Type
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Build Variant
+        working-directory: ${{ needs.create-matrix.outputs.directory }}
         run: |
-          echo "Variant: ${{ matrix.variant }}"
-          
+          echo "Running build for variant: ${{ matrix.variant }} in directory: ${{ needs.create-matrix.outputs.directory }}"
+          npm run build:${{ matrix.variant }}
+
+  run-default-build:
+    runs-on: ubuntu-latest
+    needs: create-matrix
+    if: needs.create-matrix.outputs.has_variants == 'false'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Run Default Build
+        working-directory: ${{ needs.create-matrix.outputs.directory }}
+        run: |
+          echo "Running default build in directory: ${{ needs.create-matrix.outputs.directory }}"
+          npm run build
