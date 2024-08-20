@@ -46,9 +46,8 @@ jobs:
         run: |
           CONFIG=$(yq e -o=json '.' variants.yaml)
           VARIANTS=$(echo $CONFIG | jq -r '.variants | @json')
-            echo "::set-output name=has_variants::true"
-            echo "::set-output name=variants::$VARIANTS"
-          fi
+          echo "::set-output name=has_variants::true"
+          echo "::set-output name=variants::$VARIANTS"
           echo "::set-output name=directory::${{ matrix.directories }}"
 
   build-variants:
