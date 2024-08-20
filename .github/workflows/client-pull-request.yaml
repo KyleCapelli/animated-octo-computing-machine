@@ -29,9 +29,9 @@ jobs:
         id: create-matrix
         working-directory: games
         run: |
-          MATRIX=[]
+          MATRIX=()
           CONFIG=$(cat build-config.yaml | yq e '.' -)
-          for DIR in ${{ steps.changed-files.outputs.all_changed_files }}; do
+          for DIR in games/blackjack games/carribean-stud; do
             GAME=$(basename $DIR)
             VARIANTS=$(echo "$CONFIG" | yq e ".games.${GAME}.variants[]" -)
             if [[ -n "$VARIANTS" ]]; then
