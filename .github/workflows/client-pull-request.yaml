@@ -40,17 +40,3 @@ jobs:
       - name: Test
         run: |
           echo ${{ matrix.directories }}
-
-      - name: Create Build Matrix
-        id: create-matrix
-        working-directory: ${{ matrix.directories }}
-        run: |
-          CONFIG=$(yq e -o=json '.' variants.yaml)
-          VARIANTS=$(echo $CONFIG | jq -r '.variants[]')
-
-          MATRIX=()
-          for VARIANT in $VARIANTS; do
-            MATRIX+=("{\"variant\": \"$VARIANT\"}")
-          done
-
-          echo "matrix=$(echo ${MATRIX[@]} | jq -s '.')" >> $GITHUB_OUTPUT
