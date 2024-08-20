@@ -30,8 +30,7 @@ jobs:
         working-directory: games
         run: |
           CONFIG=$(yq e -o=json '.' build-config.yaml)
-          MATRIX=$(echo "$CONFIG" | jq -r '.games | to_entries | map(if .value.variants == [] then {"directory": "games/" + .key, "build_command": "npm run build"} else .value.variants | map({"directory": "games/" + .key, "build_command": "npm run build:" + .}) end) | flatten')
-          echo "matrix=$MATRIX" >> $GITHUB_OUTPUT
+          echo $CONFIG
   
   matrix-job:
     runs-on: ubuntu-latest
