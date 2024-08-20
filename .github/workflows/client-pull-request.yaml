@@ -19,6 +19,7 @@ jobs:
         with: 
           dir_names: true
           matrix: true
+          json: true
           files: |
             games/*/client/**
 
