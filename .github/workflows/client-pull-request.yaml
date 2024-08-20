@@ -27,9 +27,10 @@ jobs:
       
       - name: Create Build Matrix
         id: create-matrix
+        working-directory: games
         run: |
           MATRIX=[]
-          CONFIG=$(cat games/build-config.yml | yq e '.' -)
+          CONFIG=$(cat build-config.yaml | yq e '.' -)
           for DIR in ${{ steps.changed-files.outputs.all_changed_files }}; do
             GAME=$(basename $DIR)
             VARIANTS=$(echo "$CONFIG" | yq e ".games.${GAME}.variants[]" -)
