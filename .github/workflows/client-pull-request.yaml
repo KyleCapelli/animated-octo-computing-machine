@@ -46,9 +46,6 @@ jobs:
         run: |
           CONFIG=$(yq e -o=json '.' variants.yaml)
           VARIANTS=$(echo $CONFIG | jq -r '.variants | @json')
-          if [[ -z "$VARIANTS" || "$VARIANTS" == "null" ]]; then
-            echo "::set-output name=has_variants::false"
-          else
             echo "::set-output name=has_variants::true"
             echo "::set-output name=variants::$VARIANTS"
           fi
