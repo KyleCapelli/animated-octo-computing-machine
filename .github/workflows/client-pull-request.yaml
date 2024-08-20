@@ -25,7 +25,7 @@ jobs:
           files: |
             games/*/client/**
       
-        name: Create Build Matrix
+      - name: Create Build Matrix
         id: create-matrix
         run: |
           MATRIX=[]
