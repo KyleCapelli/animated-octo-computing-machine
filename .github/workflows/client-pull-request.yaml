@@ -29,20 +29,9 @@ jobs:
         id: create-matrix
         working-directory: games
         run: |
-          MATRIX=()
-          CONFIG=$(cat build-config.yaml | yq e '.' -)
-          for DIR in games/blackjack games/carribean-stud; do
-            GAME=$(basename $DIR)
-            VARIANTS=$(echo "$CONFIG" | yq e ".games.${GAME}.variants[]" -)
-            if [[ -n "$VARIANTS" ]]; then
-              for VARIANT in $VARIANTS; do
-                MATRIX+=("{\"directory\":\"$DIR\",\"build_command\":\"npm run build:$VARIANT\"}")
-              done
-            else
-              MATRIX+=("{\"directory\":\"$DIR\",\"build_command\":\"npm run build\"}")
-            fi
-          done
-          echo "matrix=$(echo ${MATRIX[@]} | jq -s '.')" >> $GITHUB_OUTPUT
+          CONFIG=$(yq e -o=json '.' build-config.yaml)
+          MATRIX=$(echo "$CONFIG" | jq -r '.games | to_entries | map(if .value.variants == [] then {"directory": "games/" + .key, "build_command": "npm run build"} else .value.variants | map({"directory": "games/" + .key, "build_command": "npm run build:" + .}) end) | flatten')
+          echo "matrix=$MATRIX" >> $GITHUB_OUTPUT
   
   matrix-job:
     runs-on: ubuntu-latest
