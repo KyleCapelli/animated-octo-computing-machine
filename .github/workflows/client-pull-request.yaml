@@ -40,9 +40,9 @@ jobs:
         run: |
           echo ${{ matrix.directories }}
             
-      - name: Create Build Matrix
-        id: create-matrix
-        working-directory: ${{ matrix.directories }}
-        run: |
-          CONFIG=$(yq e -o=json '.' variants.yaml)
-          echo $CONFIG
+      # - name: Create Build Matrix
+      #   id: create-matrix
+      #   working-directory: ${{ matrix.directories }}
+      #   run: |
+      #     CONFIG=$(yq e -o=json '.' variants.yaml)
+      #     echo $CONFIG
