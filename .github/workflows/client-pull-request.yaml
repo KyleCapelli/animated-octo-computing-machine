@@ -19,6 +19,8 @@ jobs:
         with: 
           dir_names: true
           matrix: true
+          files: |
+            games/*/client/**
 
       - name: List all changed files
         env:
