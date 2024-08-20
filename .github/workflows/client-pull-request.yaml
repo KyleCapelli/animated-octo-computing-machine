@@ -24,13 +24,6 @@ jobs:
           matrix: true
           files: |
             games/*/client/**
-      
-      - name: Create Build Matrix
-        id: create-matrix
-        working-directory: games
-        run: |
-          CONFIG=$(yq e -o=json '.' build-config.yaml)
-          echo $CONFIG
   
   matrix-job:
     runs-on: ubuntu-latest
@@ -46,3 +39,10 @@ jobs:
       - name: Test
         run: |
           echo ${{ matrix.directories }}
+            
+      - name: Create Build Matrix
+        id: create-matrix
+        working-directory: ${{ matrix.directories }}
+        run: |
+          CONFIG=$(yq e -o=json '.' variants.yaml)
+          echo $CONFIG
