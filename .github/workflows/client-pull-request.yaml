@@ -26,18 +26,21 @@ jobs:
           files: |
             games/*/client/**
 
-      - name: Output changed directories
+      - name: Load Build Configuration
+        id: load-config
+        run: |
+          echo "::set-output name=config::$(cat games/build-config.json)"
+
+      - name: Set up matrix
+        id: set-matrix
         run: |
           echo "Changed directories: ${{ steps.get-changed-dirs.outputs.all_changed_files }}"
-
-  run-matrix:
-    name: Run Matrix for ${{ matrix.directory }}
-    runs-on: ubuntu-latest
-    needs: changed-files
-    strategy:
-      matrix:
-        directory: ${{ fromJson(needs.changed-files.outputs.directories) }}
-    steps:
-      - name: Echo directory
-        run: |
-          echo "Directory: ${{ matrix.directory }}"
+          CHANGED_DIRS=(${{ steps.get-changed-dirs.outputs.all_changed_files }})
+          CONFIG='${{ steps.load-config.outputs.config }}'
+          MATRIX="[]"
+          for DIR in "${CHANGED_DIRS[@]}"; do
+            BUILDS=$(echo "$CONFIG" | jq -c --arg dir "$DIR" '[.[] | select(.directory == $dir)]')
+            MATRIX=$(echo "$MATRIX" | jq -c --argjson builds "$BUILDS" '. + $builds')
+          done
+          echo "Matrix JSON: $MATRIX"
+          

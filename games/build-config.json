@@ -1,0 +1,18 @@
+[
+  {
+    "directory": "games/blackjack",
+    "build-command": "npm run build:classic"
+  },
+  {
+    "directory": "games/blackjack",
+    "build-command": "npm run build:premium"
+  },
+  {
+    "directory": "games/carribean-studd",
+    "build-command": "npm run build"
+  },
+  {
+    "directory": "games/roulette",
+    "build-command": "npm run build"
+  }
+]
