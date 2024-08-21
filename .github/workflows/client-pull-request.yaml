@@ -35,12 +35,17 @@ jobs:
         id: set-matrix
         run: |
           echo "Changed directories: ${{ steps.get-changed-dirs.outputs.all_changed_files }}"
-          CHANGED_DIRS=(${{ steps.get-changed-dirs.outputs.all_changed_files }})
-          CONFIG='${{ steps.load-config.outputs.config }}'
+          CHANGED_DIRS="${{ steps.get-changed-dirs.outputs.all_changed_files }}"
+          
+          CHANGED_DIRS_JSON=$(echo "$CHANGED_DIRS" | jq -R 'split(",")')
+          
+          CONFIG="${{ steps.load-config.outputs.config }}"
           MATRIX="[]"
-          for DIR in "${CHANGED_DIRS[@]}"; do
+          
+          for DIR in $(echo "$CHANGED_DIRS_JSON" | jq -r '.[]'); do
             BUILDS=$(echo "$CONFIG" | jq -c --arg dir "$DIR" '[.[] | select(.directory == $dir)]')
             MATRIX=$(echo "$MATRIX" | jq -c --argjson builds "$BUILDS" '. + $builds')
           done
-          echo "Matrix JSON: $MATRIX"
           
+          echo "Matrix JSON: $MATRIX"
+          echo "::set-output name=matrix::$MATRIX"
