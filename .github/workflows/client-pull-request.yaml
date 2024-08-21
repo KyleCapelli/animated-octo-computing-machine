@@ -26,6 +26,9 @@ jobs:
           files: |
             games/*/client/**
 
+      - name: Debug Changed Directories Output
+        run: echo "Changed Directories: ${{ steps.get-changed-dirs.outputs.all_changed_files }}"
+
   load-build-config:
     runs-on: ubuntu-latest
     needs: [changed-files]
@@ -41,13 +44,16 @@ jobs:
         id: parse_yaml
         uses: mikefarah/yq@v4
         with:
-          cmd: yq -o=json '.games[]' ${{ matrix.directories}}/variants.yaml
+          cmd: yq -o=json '.games[]' ${{ matrix.directories }}/variants.yaml
+
+      - name: Debug Parsed JSON Output
+        run: echo "Parsed JSON: ${{ steps.parse_yaml.outputs.result }}"
 
   build:
     runs-on: ubuntu-latest
     needs: [load-build-config]
     strategy:
       matrix:
-        directories: ${{ fromJson(needs.load-build-config.outputs.matrix) }}
+        directories: ${{ fromJson(needs.load-build-config.outputs.build-configs-matrix) }}
     steps:
       - uses: actions/checkout@v4
