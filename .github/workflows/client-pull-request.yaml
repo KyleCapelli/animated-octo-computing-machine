@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     name: Get Changed Directories
     outputs:
-      directories: ${{ steps.get-changed-dirs.outputs.all_changed_files }}
+      matrix: ${{ steps.get-changed-dirs.outputs.all_changed_files }}
     steps:
       - uses: actions/checkout@v4
 
@@ -26,8 +26,10 @@ jobs:
           files: |
             games/*/client/**
 
-      - name: Set up matrix
-        id: set-matrix
-        run: |
-          echo "JSON output of changed directories:"
-          echo "${{ toJson(fromJson(steps.get-changed-dirs.outputs.all_changed_files)) }}"
+  run-build:
+    runs-on: ubuntu-latest
+    needs: [changed-files]
+    matrix:
+      directories: ${{ needs.changed-files.outputs.matrix }}
+    steps:
+      - uses: actions/checkout@v4
