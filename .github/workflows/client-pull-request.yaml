@@ -37,12 +37,11 @@ jobs:
 
       - name: Read and Parse YAML
         id: parse_yaml
-        uses: mikefarah/yq@v4
-        with:
-          args: |
-            -o=json '.games[] | {"game-id": .["game-id"], "client-build-command": .["client-build-command"]}'
-        env:
-          FILE_PATH: ${{ matrix.directories }}/variants.yaml
+        run: |
+          yaml_content=$(yq -o=json '.games[] | {"game-id": .["game-id"], "client-build-command": .["client-build-command"]}' ${{ matrix.directories }}/variants.yaml)
+          echo "yaml_content=$yaml_content" >> $GITHUB_ENV
+          echo "::set-output name=result::$yaml_content"
 
       - name: Echo Variables
-        run: echo ${{ steps.parse_yaml.outputs }}
+        run: echo "${{ steps.parse_yaml.outputs.result }}"
+
