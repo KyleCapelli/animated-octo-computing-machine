@@ -1,0 +1,7 @@
+games:
+  blackjack:
+    variants:
+      classic: "npm run build:classic"
+      premium: "npm run build:premium"
+  carribean-studd:
+    build: "npm run build"
