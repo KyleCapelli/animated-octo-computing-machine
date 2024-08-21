@@ -34,5 +34,5 @@ jobs:
       - name: Set up matrix
         id: set-matrix
         run: |
-          CHANGED_DIRS="${{ steps.get-changed-dirs.outputs.all_changed_files }}"
+          CHANGED_DIRS="${{ fromJson(steps.get-changed-dirs.outputs.all_changed_files) }}"
           echo $CHANGED_DIRS
