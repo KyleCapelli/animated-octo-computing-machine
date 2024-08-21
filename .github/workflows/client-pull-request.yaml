@@ -29,6 +29,8 @@ jobs:
   load-build-config:
     runs-on: ubuntu-latest
     needs: [changed-files]
+    outputs:
+      build-configs-matrix: ${{ steps.parse_yaml.outputs.result }}
     strategy:
       matrix:
         directories: ${{ fromJson(needs.changed-files.outputs.matrix) }}
@@ -41,5 +43,9 @@ jobs:
         with:
           cmd: yq -o=json '.games[]' ${{ matrix.directories}}/variants.yaml
 
-      - name: Debug Parsed JSON
-        run: echo "${{ steps.parse_yaml.outputs.result }}"
+  build:
+    runs-on: ubuntu-latest
+    needs: [load-build-config]
+    strategy:
+      matrix:
+        directories: ${{ fromJson(needs.load-build-config.outputs.matrix) }}
