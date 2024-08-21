@@ -26,45 +26,6 @@ jobs:
             games/*/client/**
 
       - name: Output changed directories
-        run: echo "Changed directories: ${{ steps.get-changed-dirs.outputs.all_changed_files }}"
+        run: |
+          echo "Changed directories: ${{ steps.get-changed-dirs.outputs.all_changed_files }}"
 
-
-  # create-matrix:
-  #   runs-on: ubuntu-latest
-  #   name: Create matrix
-  #   needs: [changed-files]
-  #   outputs:
-  #     variants: ${{ steps.set-variants.outputs.variants }}
-  #   strategy:
-  #     matrix: 
-  #       directories: ${{ fromJSON(needs.changed-files.outputs.matrix) }}
-  #     fail-fast: false
-  #   steps:
-  #     - name: Checkout
-  #       uses: actions/checkout@v4
-
-  #     - name: Check Variants
-  #       id: set-variants
-  #       working-directory: ${{ matrix.directories }}
-  #       run: |
-  #         CONFIG=$(yq e -o=json '.' variants.yaml)
-  #         VARIANTS=$(echo $CONFIG | jq -r '.variants | @json')
-  #         echo $VARIANTS
-
-
-  # build-variants:
-  #   runs-on: ubuntu-latest
-  #   needs: create-matrix
-  #   if: needs.create-matrix.outputs.has_variants == 'true'
-  #   strategy:
-  #     matrix:
-  #       variant: ${{ fromJSON(needs.create-matrix.outputs.variants) }}
-  #   steps:
-  #     - name: Checkout
-  #       uses: actions/checkout@v4
-
-  #     - name: Build Variant
-  #       working-directory: ${{ needs.create-matrix.outputs.directory }}
-  #       run: |
-  #         echo "Running build for variant: ${{ matrix.variant }} in directory: ${{ needs.create-matrix.outputs.directory }}"
-  #         npm run build:${{ matrix.variant }}
