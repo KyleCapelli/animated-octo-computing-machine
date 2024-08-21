@@ -33,6 +33,8 @@ jobs:
   load-build-config:
     runs-on: ubuntu-latest
     needs: [changed-files]
+    outputs:
+      build-configs-matrix: ${{ steps.parse_yaml.outputs.result }}
     strategy:
       matrix:
         directories: ${{ fromJson(needs.changed-files.outputs.matrix) }}
@@ -44,10 +46,11 @@ jobs:
         uses: mikefarah/yq@v4
         with:
           cmd: yq -o=json '.games' ${{ matrix.directories }}/variants.yaml
+
       - name: Debug Parsed JSON Output
         run: |
           echo "Parsed JSON: ${{ steps.parse_yaml.outputs.result }}"
-        
-        uses: ./.github/workflows/build-client.yaml
+
+      - uses: ./.github/workflows/build-client.yaml
         with:
           build-configs-matrix: ${{ steps.parse_yaml.outputs.result }}
