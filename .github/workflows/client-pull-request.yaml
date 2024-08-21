@@ -31,6 +31,6 @@ jobs:
     needs: [changed-files]
     strategy:
       matrix:
-        directories: ${{ needs.changed-files.outputs.matrix }}
+        directories: ${{ fromJson(needs.changed-files.outputs.matrix) }}
     steps:
       - uses: actions/checkout@v4
