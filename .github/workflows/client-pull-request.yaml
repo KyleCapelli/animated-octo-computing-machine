@@ -51,6 +51,6 @@ jobs:
         run: |
           echo "Parsed JSON: ${{ steps.parse_yaml.outputs.result }}"
 
-      - uses: ./.github/workflows/build-client.yaml
+      - uses: ./.github/workflows/build-client.yaml@main
         with:
           build-configs-matrix: ${{ steps.parse_yaml.outputs.result }}
