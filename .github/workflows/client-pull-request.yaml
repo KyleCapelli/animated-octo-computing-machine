@@ -34,11 +34,13 @@ jobs:
         directories: ${{ fromJson(needs.changed-files.outputs.matrix) }}
     steps:
       - uses: actions/checkout@v4
-      
-      - name: Read YAML file
-        id: read_yaml
-        run: |
-          yaml_content=$(cat ${{ matrix.directories }}/variants.yaml)
-          echo "YAML Content: $yaml_content"
-          echo "::set-output name=yaml_content::$yaml_content"
+
+      - name: Read and Parse YAML
+        id: parse_yaml
+        uses: mikefarah/yq@v4
+        with:
+          args: |
+            -o=json '.games[] | {"game-id": .["game-id"], "client-build-command": .["client-build-command"]}'
+        env:
+          FILE_PATH: ${{ matrix.directories }}/variants.yaml
 
