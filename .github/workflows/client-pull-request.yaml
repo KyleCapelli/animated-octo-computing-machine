@@ -44,3 +44,5 @@ jobs:
         env:
           FILE_PATH: ${{ matrix.directories }}/variants.yaml
 
+      - name: Echo Variables
+        run: echo ${{ steps.parse_yaml.outputs.result }}
