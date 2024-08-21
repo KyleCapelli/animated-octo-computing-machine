@@ -29,7 +29,8 @@ jobs:
   run-build:
     runs-on: ubuntu-latest
     needs: [changed-files]
-    matrix:
-      directories: ${{ needs.changed-files.outputs.matrix }}
+    strategy:
+      matrix:
+        directories: ${{ needs.changed-files.outputs.matrix }}
     steps:
       - uses: actions/checkout@v4
