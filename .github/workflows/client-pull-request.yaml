@@ -35,11 +35,11 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Read and Parse YAML
+      - name: Read and Parse YAML to JSON Array
         id: parse_yaml
         uses: mikefarah/yq@v4
         with:
-          cmd: yq . ${{ matrix.directories }}/variants.yaml
+          cmd: yq -o=json '.games[]' ${{ matrix.build-configs }}/variants.yaml
 
-      - name: Echo Variables
-        run: echo ${{ steps.parse_yaml.outputs.result }}
+      - name: Debug Parsed JSON
+        run: echo "${{ steps.parse_yaml.outputs.result }}"
