@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     name: Get Changed Directories
     outputs:
-      directories: ${{ steps.get-changed-dirs.outputs.directories }}
+      directories: ${{ steps.get-changed-dirs.outputs.all_changed_files }}
     steps:
       - uses: actions/checkout@v4
 
