@@ -37,4 +37,5 @@ jobs:
         directory: ${{ fromJson(needs.changed-files.outputs.directories) }}
     steps:
       - name: Echo directory
-        run: echo "Directory: ${{ matrix.directory }}"
+        run: |
+          echo "Directory: ${{ matrix.directory }}"
