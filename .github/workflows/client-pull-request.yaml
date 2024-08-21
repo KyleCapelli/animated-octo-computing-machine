@@ -45,8 +45,7 @@ jobs:
         id: parse_yaml
         uses: mikefarah/yq@v4
         with:
-          cmd: yq -o=json '.games[]' ${{ matrix.directories }}/variants.yaml
-
+          cmd: yq -o=json '.games' ${{ matrix.directories }}/variants.yaml
       - name: Debug Parsed JSON Output
         run: |
           echo "Parsed JSON: ${{ steps.parse_yaml.outputs.result }}"
