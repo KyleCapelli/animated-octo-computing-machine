@@ -29,3 +29,12 @@ jobs:
         run: |
           echo "Changed directories: ${{ steps.get-changed-dirs.outputs.all_changed_files }}"
 
+  run-matrix:
+    runs-on: ubuntu-latest
+    needs: changed-files
+    strategy:
+      matrix:
+        directory: ${{ fromJson(needs.changed-files.outputs.directories) }}
+    steps:
+      - name: Echo directory
+        run: echo "Directory: ${{ matrix.directory }}"
