@@ -35,4 +35,4 @@ jobs:
         id: set-matrix
         run: |
           echo "JSON output of changed directories:"
-          echo '${{ fromJson(steps.get-changed-dirs.outputs.all_changed_files) }}'
+          echo "${{ toJson(fromJson(steps.get-changed-dirs.outputs.all_changed_files)) }}"
