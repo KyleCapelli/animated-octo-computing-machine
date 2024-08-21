@@ -1,0 +1,7 @@
+games:
+  - game-id: blackjack-classic
+    client-build-command: "npm run build:classic"
+  - game-id: blackjack-premium
+    client-build-command: "npm run build:premium"
+
+

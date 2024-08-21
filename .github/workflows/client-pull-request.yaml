@@ -26,11 +26,6 @@ jobs:
           files: |
             games/*/client/**
 
-      - name: Load Build Configuration
-        id: load-config
-        run: |
-          echo "::set-output name=config::$(cat games/build-config.json)"
-
       - name: Set up matrix
         id: set-matrix
         run: |
