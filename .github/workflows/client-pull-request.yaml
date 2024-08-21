@@ -26,7 +26,7 @@ jobs:
           files: |
             games/*/client/**
 
-  run-build:
+  load-build-config:
     runs-on: ubuntu-latest
     needs: [changed-files]
     strategy:
@@ -34,3 +34,11 @@ jobs:
         directories: ${{ fromJson(needs.changed-files.outputs.matrix) }}
     steps:
       - uses: actions/checkout@v4
+      
+      - name: Read YAML file
+        id: read_yaml
+        run: |
+          yaml_content=$(cat ${{ matrix.directories }}/variants.yaml)
+          echo "YAML Content: $yaml_content"
+          echo "::set-output name=yaml_content::$yaml_content"
+
