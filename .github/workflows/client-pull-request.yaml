@@ -33,6 +33,9 @@ jobs:
   build-and-deploy:
     needs: [changed-files]
     uses: ./.github/workflows/client-build.yaml
+    strategy:
+      matrix:
+        directories: ${{ needs.changed-files.outputs.directories }}
     with:
-      directories: ${{ needs.changed-files.outputs.directories }}
+      directory: ${{ matrix.directory }}
     secrets: inherit

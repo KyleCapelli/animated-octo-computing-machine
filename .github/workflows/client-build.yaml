@@ -3,8 +3,8 @@ name: Build Client
 on:
   workflow_call:
     inputs:
-      directories:
-        description: 'Command to build the client'
+      directory:
+        description: 'Directory of the game which contains the client'
         required: true
         type: string
 
@@ -13,9 +13,6 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       build-configs-matrix: ${{ steps.parse_yaml.outputs.result }}
-    strategy:
-      matrix:
-        directories: ${{ fromJson(inputs.directories) }}
     steps:
       - uses: actions/checkout@v4
 
