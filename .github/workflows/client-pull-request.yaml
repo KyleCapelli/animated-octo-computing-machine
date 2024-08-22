@@ -35,7 +35,7 @@ jobs:
     uses: ./.github/workflows/client-build.yaml
     strategy:
       matrix:
-        directories: ${{ fromJson(needs.changed-files.outputs.directories) }}
+        directory: ${{ fromJson(needs.changed-files.outputs.directories) }}
     with:
       directory: ${{ matrix.directory }}
     secrets: inherit

@@ -16,10 +16,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Debug directory
-        run: |
-          echo ${{ inputs.directory }}
-
       - name: Read and Parse YAML to JSON Array
         id: parse_yaml
         uses: mikefarah/yq@v4
