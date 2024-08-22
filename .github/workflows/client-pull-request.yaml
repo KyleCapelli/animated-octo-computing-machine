@@ -34,5 +34,5 @@ jobs:
     needs: [changed-files]
     uses: ./.github/workflows/client-build.yaml
     with:
-      directories: ${{ needs.changed-files.outputs.matrix }}
+      directories: ${{ needs.changed-files.outputs.directories }}
     secrets: inherit
