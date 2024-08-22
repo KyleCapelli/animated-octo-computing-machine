@@ -16,11 +16,15 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Debug directory
+        run: |
+          echo ${{ inputs.directory }}
+
       - name: Read and Parse YAML to JSON Array
         id: parse_yaml
         uses: mikefarah/yq@v4
         with:
-          cmd: yq -o=json '.games' ${{ github.event.inputs.directory }}/variants.yaml
+          cmd: yq -o=json '.games' ${{ inputs.directory }}/variants.yaml
 
       - name: Debug Parsed JSON Output
         run: |
