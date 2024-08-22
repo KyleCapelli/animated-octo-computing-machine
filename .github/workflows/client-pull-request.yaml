@@ -1,0 +1,41 @@
+name: Client Pull Request
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - games/*/client/**
+
+jobs:
+  changed-files:
+    runs-on: ubuntu-latest
+    name: Get Changed Directories
+    outputs:
+      directories: ${{ steps.get-changed-dirs.outputs.all_changed_files }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Get changed directories
+        id: get-changed-dirs
+        uses: tj-actions/changed-files@v44
+        with:
+          dir_names: true
+          dir_names_max_depth: 2
+          matrix: true
+          files: |
+            games/*/client/**
+
+      - name: Debug Changed Directories Output
+        run: |
+         echo "Changed Directories: ${{ steps.get-changed-dirs.outputs.all_changed_files }}"
+  
+  build-and-deploy:
+    needs: [changed-files]
+    uses: ./.github/workflows/client-build.yaml
+    strategy:
+      matrix:
+        directory: ${{ fromJson(needs.changed-files.outputs.directories) }}
+    with:
+      directory: ${{ matrix.directory }}
+    secrets: inherit
