@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     name: Get Changed Directories
     outputs:
-      matrix: ${{ steps.get-changed-dirs.outputs.all_changed_files }}
+      directories: ${{ steps.get-changed-dirs.outputs.all_changed_files }}
     steps:
       - uses: actions/checkout@v4
 
@@ -29,36 +29,10 @@ jobs:
       - name: Debug Changed Directories Output
         run: |
          echo "Changed Directories: ${{ steps.get-changed-dirs.outputs.all_changed_files }}"
-
-  load-build-config:
-    runs-on: ubuntu-latest
-    needs: [changed-files]
-    outputs:
-      build-configs-matrix: ${{ steps.parse_yaml.outputs.result }}
-    strategy:
-      matrix:
-        directories: ${{ fromJson(needs.changed-files.outputs.matrix) }}
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Read and Parse YAML to JSON Array
-        id: parse_yaml
-        uses: mikefarah/yq@v4
-        with:
-          cmd: yq -o=json '.games' ${{ matrix.directories }}/variants.yaml
-
-      - name: Debug Parsed JSON Output
-        run: |
-          echo "Parsed JSON: ${{ steps.parse_yaml.outputs.result }}"
   
   build-and-deploy:
-    needs: [load-build-config]
-    strategy:
-      matrix:
-        configs: ${{ fromJson(needs.load-build-config.outputs.build-configs-matrix) }}
-      fail-fast: false
-
+    needs: [changed-files]
     uses: ./.github/workflows/client-build.yaml
     with:
-      build-command: ${{ matrix.configs.client-build-command }}
+      directories: ${{ needs.changed-files.outputs.matrix }}
     secrets: inherit
