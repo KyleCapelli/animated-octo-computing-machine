@@ -15,7 +15,7 @@ jobs:
       build-configs-matrix: ${{ steps.parse_yaml.outputs.result }}
     strategy:
       matrix:
-        directories: ${{ inputs.directories }}
+        directories: ${{ fromJson(inputs.directories) }}
     steps:
       - uses: actions/checkout@v4
 
